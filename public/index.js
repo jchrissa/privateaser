@@ -34,8 +34,8 @@ const events = [{
   'persons': 8,
   'options': {
     'deductibleReduction': false
-  },
-  'price': 0,
+    },
+    'price': 0,
   'commission': {
     'insurance': 0,
     'treasury': 0,
@@ -64,8 +64,8 @@ const events = [{
   'persons': 80,
   'options': {
     'deductibleReduction': true
-  },
-  'price': 0,
+        },
+        'price':0,
   'commission': {
     'insurance': 0,
     'treasury': 0,
@@ -144,7 +144,81 @@ const actors = [{
     'type': 'credit',
     'amount': 0
   }]
-}];
+    }];
+//function my() {
+    let i;
+let e;
+let a;
+for (i = 0; i < events.length; i++) {
+    for (e = 0; e < bars.length; e++) {
+        if (events[i].persons < 10) {
+            events[i].price = (events[i].time * bars[e].pricePerHour) + (events[i].persons * bars[i].pricePerPerson);
+
+        }
+        else {
+            if (events[i].barId == bars[e].id && events[i].persons >= 10) {
+                events[i].price = ((events[i].time * bars[e].pricePerHour) + (events[i].persons * bars[i].pricePerPerson)) * (0.9);
+
+            }
+            if (events[i].barId == bars[e].id && events[i].persons >= 20) {
+                events[i].price = ((events[i].time * bars[e].pricePerHour) + (events[i].persons * bars[i].pricePerPerson)) * (0.8);
+
+            }
+            if (events[i].barId == bars[e].id && events[i].persons >= 60) {
+                events[i].price = ((events[i].time * bars[e].pricePerHour) + (events[i].persons * bars[i].pricePerPerson)) * (0.5);
+
+            }
+        }
+    }
+}
+
+
+for (i = 0; i < events.length; i++) {
+    if (events[i].deductibleReduction === true) {
+        events[i].commission = (events[i].price * 0.3);
+        events[i].insurance = (events[i].commission / 2);
+        events[i].treasury = events[i].persons;
+        events[i].privateaser = (events[i].persons) + (events[i].commission) - (events[i].insurance + events[i].treasury);
+        events[i].price = events[i].price + events[i].persons;
+    }
+    else {
+        events[i].commission = (events[i].price * 0.3);
+        events[i].insurance = (events[i].commission / 2);
+        events[i].treasury = events[i].persons;
+        events[i].privateaser = (events[i].commission) - (events[i].insurance + events[i].treasury);
+    }
+   
+}
+for (i = 0; i < actors.length; i++) {
+    for (e = 0; e < events.length; e++) {
+        if (actors[i].eventId === events[e].id) {
+            for (a = 0; a < actors[i].payment.length; a++) {
+                if (actors[i].payment[a].who === "booker") {
+                    actors[i].payment[a].amount = events[e].price;
+                }
+                if (actors[i].payment[a].who === "bar") {
+                    actors[i].payment[a].amount = (events[e].price - events[e].commission);
+                }
+                if (actors[i].payment[a].who === "insurance") {
+                    actors[i].payment[a].amount = events[e].insurance;
+                }
+
+                if (actors[i].payment[a].who === "treasury") {
+                    actors[i].payment[a].amount = events[e].treasury;
+                }
+                if (actors[i].payment[a].who === "privateaser") {
+                    actors[i].payment[a].amount = events[e].privateaser;
+                }
+
+            }
+
+          
+
+            }
+        }
+}
+
+
 
 console.log(bars);
 console.log(events);
